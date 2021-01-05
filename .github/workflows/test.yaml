@@ -1,0 +1,32 @@
+name: test
+on: [push]
+jobs:
+  test-manifests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app:
+          - app1
+          - app2
+        stage:
+          - development
+          - staging
+          - production
+        include:
+          - stage: development
+            aws-access-key-id-secret-name: DEVELOPMENT_AWS_ACCESS_KEY_ID
+            aws-secret-access-key-secret-name: DEVELOPMENT_AWS_SECRET_ACCESS_KEY
+          - stage: staging
+            aws-access-key-id-secret-name: STAGING_AWS_ACCESS_KEY_ID
+            aws-secret-access-key-secret-name: STAGING_AWS_SECRET_ACCESS_KEY
+          - stage: production
+            aws-access-key-id-secret-name: PRODUCTION_AWS_ACCESS_KEY_ID
+            aws-secret-access-key-secret-name: PRODUCTION_AWS_SECRET_ACCESS_KEY
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Validate ${{ matrix.app }} on ${{ matrix.stage }}
+        run: |
+          echo ${{ secrets[matrix.aws-access-key-id-secret-name] }}
+          echo ${{ secrets[matrix.aws-secret-access-key-secret-name] }}
+        shell: bash
