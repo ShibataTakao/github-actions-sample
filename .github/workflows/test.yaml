@@ -7,7 +7,6 @@ jobs:
       matrix:
         app:
           - app1
-          - app2
         stage:
           - development
           - staging
@@ -32,5 +31,7 @@ jobs:
           aws-secret-access-key: ${{ secrets[matrix.aws-secret-access-key-secret-name] }}
           aws-region: ap-northeast-1
       - run: aws sts get-caller-identity
+      - run: aws eks list-clusters
+      - run: aws eks describe-cluster --name terraform-eks-demo
       - run: aws eks update-kubeconfig --name terraform-eks-demo
       - run: argo -n argo-jobs list
