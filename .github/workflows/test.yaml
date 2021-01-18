@@ -31,7 +31,11 @@ jobs:
           aws-secret-access-key: ${{ secrets[matrix.aws-secret-access-key-secret-name] }}
           aws-region: ap-northeast-1
       - run: aws sts get-caller-identity
-      - run: aws eks list-clusters
-      - run: aws eks describe-cluster --name terraform-eks-demo
       - run: aws eks update-kubeconfig --name terraform-eks-demo
+      - name: Install argo
+        run: |
+          curl -sLO https://github.com/argoproj/argo/releases/download/v2.12.3/argo-linux-amd64.gz
+          gunzip argo-linux-amd64.gz
+          chmod +x argo-linux-amd64
+          sudo cp argo-linux-amd64 /usr/local/bin/argo
       - run: argo -n argo-jobs list
