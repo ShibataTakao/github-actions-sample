@@ -25,8 +25,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Validate ${{ matrix.app }} on ${{ matrix.stage }}
-        run: |
-          echo ${{ secrets[matrix.aws-access-key-id-secret-name] }}
-          echo ${{ secrets[matrix.aws-secret-access-key-secret-name] }}
-        shell: bash
+      - name: Configure AWS credentials from ${{ matrix.stage }} account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets[matrix.aws-access-key-id-secret-name] }}
+          aws-secret-access-key: ${{ secrets[matrix.aws-secret-access-key-secret-name] }}
+          aws-region: ap-northeast-1
+      - run: aws eks update-kubeconfig --name terraform-eks-demo
+      - run: argo -n argo-jobs list
